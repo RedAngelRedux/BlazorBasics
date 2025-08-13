@@ -1,0 +1,28 @@
+﻿
+@if(string.IsNullOrEmpty(DisplayMessage)) return;
+
+<div class="alert @CssClass">
+    <h4>@Title</h4>
+    <div>@DisplayMessage</div>
+</div>
+
+@code {
+    /// <summary>
+    /// The message to dsiplay in the message box
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string? DisplayMessage { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Optional Title to display in the message box.
+    /// </summary>
+    [Parameter]
+    public string Title { get; set; } = "Message";
+
+    /// <summary>
+    /// The CSS class to apply to the message box.
+    /// Defaults to "alert-success" for a green success message.
+    /// </summary>
+    [Parameter]
+    public string CssClass { get; set; } = "alert-success";
+}
