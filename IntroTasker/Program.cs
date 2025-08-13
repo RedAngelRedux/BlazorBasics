@@ -1,4 +1,4 @@
-using IntroTasker;
+using IntroTasker.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
