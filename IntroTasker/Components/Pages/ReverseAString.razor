@@ -26,10 +26,9 @@
     private void ReverseString()
     {
         reversedString = ReverseString(inputString);
-        isPalindrome = IsPalindrome(inputString);
-
         displayString = $"REVERSED STRING:  {reversedString}";
 
+        isPalindrome = IsPalindrome(inputString);
         if(isPalindrome)
         {
             title= "Palindrome";
@@ -55,13 +54,7 @@
     private bool IsPalindrome(string input)
     {
         // Remove all non-alphanumeric characters and convert to lowercase
-        string cleanedInput = Regex.Replace(input, "[^a-zA-Z0-9]", "").ToLower();
-        
-        // // Reverse the cleaned string
-        // char[] reversedArray = cleanedInput.ToCharArray();
-        // Array.Reverse(reversedArray);
-        // string reversedString = new string(reversedArray);
-
+        string cleanedInput = Regex.Replace(input, "[^a-zA-Z0-9]", "").ToLower();        
         return cleanedInput == ReverseString(cleanedInput);
     }
 
