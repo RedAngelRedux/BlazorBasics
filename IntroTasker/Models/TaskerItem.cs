@@ -10,5 +10,5 @@ public class TaskerItem
     [Required(ErrorMessage = "Every task must have a name")]
     public string Name { get; set; } = string.Empty;
 
-    public bool IsCopmplete { get; set; } = false;  
+    public bool IsComplete { get; set; } = false;  
 }

@@ -6,21 +6,49 @@
             <img src="/img/mw1920_image.png" width="300" alt="Tasker Logo" class="img-fluid mb-3" />
         </div>
         <div>
-            <EditForm Model="taskerItem">
+            <EditForm Model="taskerItem" OnValidSubmit="AddTask">
                 <DataAnnotationsValidator />
                 <div class="d-flex flex-row gap-2">
                     <InputText class="form-control" placeholder="Enter a task" @bind-Value=taskerItem.Name />
                     <button type="submit" class="btn btn-primary">Add</button>
                 </div>
                 <div>
-                    <ValidationMessage For="() => taskerItem.Name" />
+                    <ValidationMessage For="() => taskerItem.Name"" />
                 </div>
             </EditForm>
         </div>
         <hr />
+        <div class="vstack">
+            @foreach (var item in taskerItems)
+            {
+                <TaskerLine Item="item" OnDeleteCallBack="DeleteTask" OnCompleteCallBack="CompleteTask" />
+            }
+        </div>
     </div>
 </div>
 
 @code {
+
     private TaskerItem taskerItem = new();
+    private List<TaskerItem> taskerItems = [];
+
+    private void AddTask()
+    {
+        if (!string.IsNullOrWhiteSpace(taskerItem.Name))
+        {
+            taskerItems.Add(new TaskerItem { Name = taskerItem.Name, Id = Guid.NewGuid()});
+            taskerItem = new TaskerItem(); // Reset the input field
+        }        
+    }
+
+    private void DeleteTask(TaskerItem item) => taskerItems.Remove(item);
+    
+    private void CompleteTask(TaskerItem item)
+    {
+        var task = taskerItems.FirstOrDefault(t => t.Id == item.Id);
+        if (task != null)
+        {
+            task.IsComplete = !task.IsComplete; // Toggle completion status
+        }
+    }
 }
