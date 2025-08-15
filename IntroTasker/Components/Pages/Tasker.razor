@@ -1,5 +1,10 @@
 ﻿@page "/tasker"
 
+@using System.Text.Json
+@using System.Text.Json.Serialization
+
+@inject IJSRuntime JS;
+
 <div class="d-flex align-items.center justify-content-center">
     <div class="task p-5">
         <div class="p-2 text-center mb-3">
@@ -32,23 +37,50 @@
     private TaskerItem taskerItem = new();
     private List<TaskerItem> taskerItems = [];
 
-    private void AddTask()
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync(); // Load the task list from local storage when the component is initialized
+    }
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            // Load the task list from local storage when the component is initialized
+            string? taskerItemsJson = await JS.InvokeAsync<string>("localStorage.getItem", "taskerList") ?? "[]";
+            ;
+            if (!string.IsNullOrEmpty(taskerItemsJson))
+            {
+                taskerItems = JsonSerializer.Deserialize<List<TaskerItem>>(taskerItemsJson) ?? [];
+            }
+        }
+        catch (Exception)
+        {
+            taskerItems = [];
+            await SaveListAsync(); // Ensure we save an empty list if loading fails
+        }
+    }
+
+    private async Task AddTask()
     {
         if (!string.IsNullOrWhiteSpace(taskerItem.Name))
         {
             taskerItems.Add(new TaskerItem { Name = taskerItem.Name, Id = Guid.NewGuid()});
             taskerItem = new TaskerItem(); // Reset the input field
+            await SaveListAsync(); // Save the updated list to local storage
         }        
     }
 
-    private void DeleteTask(TaskerItem item) => taskerItems.Remove(item);
-    
-    private void CompleteTask(TaskerItem item)
+    private async Task SaveListAsync()
     {
-        var task = taskerItems.FirstOrDefault(t => t.Id == item.Id);
-        if (task != null)
-        {
-            task.IsComplete = !task.IsComplete; // Toggle completion status
-        }
+        string? taskerItemsJson = JsonSerializer.Serialize(taskerItems);
+        await JS.InvokeVoidAsync("localStorage.setItem", "taskerList", taskerItemsJson); 
+    }
+
+    private void DeleteTask(TaskerItem item) => taskerItems.Remove(item);
+
+    private async Task CompleteTask(TaskerItem item)
+    {
+        await SaveListAsync(); // Save the updated list to local storage
     }
 }
